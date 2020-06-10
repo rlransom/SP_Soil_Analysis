@@ -4,6 +4,7 @@ remove(list = ls())
 #Load necessary packages
 install.packages("tidyverse")
 library("tidyverse")
+library("stringr")
 
 #Install all raw data files from the Clinton location
 SL021328 <- read_csv("./Raw_Soil_Data/RAW_Clinton_SL021328.csv")
@@ -116,4 +117,9 @@ colnames(crop1)==colnames(crop2)
 ##bind
 Data <- rbind(crop1, crop2)
 
+colnames(Data)
+
+#Filter out sweetpotato plots
+
+sp <- Data[str_detect(Data$Crop, "Sweetpotato"),]
 

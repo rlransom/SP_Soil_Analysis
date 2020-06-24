@@ -231,6 +231,7 @@ Data <- Data %>%
     Base_Sat = "BASE SAT.",
     Zn_Avail_Crop = "Zn Avail",
     SS = "SS Result",
+    NN = "NN Result",
     AM = "AM Result"
   )
 
@@ -249,7 +250,7 @@ Soil_18 <- Data %>%
   filter(Complete_Date >= as.Date("2018-01-01") & Complete_Date <= as.Date("2018-12-31"))
 #Filtering by Field ID
 Soil_18 <- Soil_18 %>%
-  filter(Field_ID == "B5"| Field_ID == "BB")
+  filter(Sample_ID == "B5"| Sample_ID == "BB")
 #Remove any crops that are not Sweetpotatoes
 Soil_18 <- Soil_18 %>%
   filter(Crop == "Sweetpotato")
@@ -257,6 +258,8 @@ Soil_18 <- Soil_18 %>%
 #Add Trial # Column
 Trial <- c("18NCGT0014HCR", "18NCGT0014KIN ")
 Soil_18 <- cbind(Soil_18, Trial)
+
+Soil_18 <- Soil_18[,c(1:4, 29, 5:28)]
 
 
 #Export 2018 sweetpotato soil analysis table as CSV
@@ -272,9 +275,10 @@ Soil_19 <- Data %>%
 #Filtering by Field ID
 Soil_19 <- Soil_19 %>%
   filter(
-      Sample_ID == "HC" | Sample_ID == "F10" | Sample_ID == "HB" |
-      Sample_ID == "S02" | Sample_ID == "M1" |
-      Sample_ID == "M06" | Sample_ID == "S03" )
+      Sample_ID == "F09" | Sample_ID == "F10" | Sample_ID == "F11" |
+      Sample_ID == "HB" | Sample_ID == "S02" | Sample_ID == "M1" |
+      Sample_ID == "M06" | Sample_ID == "S03" | Sample_ID == "HC" |
+      Sample_ID == "F03")
 
 #Remove any crops that are not Sweetpotatoes
 Soil_19 <- Soil_19 %>%
@@ -284,14 +288,55 @@ Soil_19 <- Soil_19 %>%
 #Some fields hosted multiple trials.
 #Duplicate rows to account for multiple trials
 #####!!Temporary fix, I need to come back and re-work this code to make it less labor-intensive on the user's end
-Soil_19 <- Soil_19[,c(1,1,2,3,4,4,4,4,)]
+
+#Number of trials in field S02
+S02_Trials <- 2
+#Number of trials in field S03
+S03_Trials <- 1
+#Number of trials in field M06
+M06_Trials <- 1
+#Number of trials in field F03
+F03_Trials <- 1
+#Number of trials in field F09
+F09_Trials <- 1
+#Number of trials in field F10
+F10_Trials <- 3
+#Number of trials in field F11
+F11_Trials <- 1
+#Number of trials in field H02
+H02_Trials <- 8
+#Number of trials in field H03
+H03_Trials <- 5
 
 
+rep_rows <- c(rep("1", S02_Trials), rep("2", S03_Trials),
+              rep("3", M06_Trials), rep("4", F03_Trials),
+              rep("5", F09_Trials), rep("6", F10_Trials),
+              rep("7", F11_Trials), rep("8", H02_Trials),
+              rep("9", H03_Trials)
+              )
 
-Trial <- c("18NCGT0014HCR", "18NCGT0014KIN ")
-Soil_19 <- cbind(Soil_18, Trial)
+Soil_19 <- Soil_19[rep_rows,]
+
+#Determine the trial names in each plot
+#Work in progress
+#This required me to look at the table of 2019 trials and assign each to the plot. Ideally I will upload the spreadsheet correlating trial #s and field IDs and the script would handle it
+S02_Trial_Names <- c("19MCY30061HCRS02", "19SPEC0052HCRS02")
+S03_Trial_Names <- c("19PURS0036HCRS03")
+M06_Trial_Names <- c("19Y2GS_HCR")
+F03_Trial_Names <- c("19PRE2HCRSF030159")
+F09_Trial_Names <- c("19Y1GS_HCR")
+F10_Trial_Names <- c("19ADYT0008HCR", "19CHIP0036HCRF10", "19PRE10032HCRF10")
+F11_Trial_Names <- c("19MCY30036HCRF11")
+H02_Trial_Names <- c("19CHIP0036KINH02", "19MCY10036CUNH02", "19MCY30036CUNH02", "19PRE20032CUNH02", "19PURS0036CUNH02", "19SPEC0024CUNH02", "19Y1GS_KIN", "19Y2GS_KIN")
+H03_Trial_Names <- c("19ADYT0008CUNH03", "19NCGT0016CUNH03", "19NMER0020CUNH03", "19PRE10032CUNH03", "19PRE30046CUNH03")
+
+Trial <- c(S02_Trial_Names, S03_Trial_Names, M06_Trial_Names, F03_Trial_Names, F09_Trial_Names, F10_Trial_Names, F11_Trial_Names, H02_Trial_Names, H03_Trial_Names)
+Soil_19 <- cbind(Soil_19, Trial)
+
+Soil_19 <- Soil_19[,c(1:4, 29, 5:28)]
 
 #Export 2018 sweetpotato soil analysis table as CSV
-write_csv(Soil_18, path = "Exported_Data/Soil_Report_2018.csv")
+write_csv(Soil_19, path = "Exported_Data/Soil_Report_2019.csv")
 
 
